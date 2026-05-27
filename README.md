@@ -1,4 +1,4 @@
-![Python](https://img.shields.io/badge/python-3.10+-blue) ![FastMCP](https://img.shields.io/badge/FastMCP-latest-orange) ![SQLite](https://img.shields.io/badge/database-SQLite-lightblue) ![MCP](https://img.shields.io/badge/MCP-remote-blueviolet) ![Users](https://img.shields.io/badge/multi--user-isolated-green) ![License](https://img.shields.io/badge/license-MIT-brightgreen)
+![Python](https://img.shields.io/badge/python-3.11+-blue) ![FastMCP](https://img.shields.io/badge/FastMCP-latest-orange) ![SQLite](https://img.shields.io/badge/database-SQLite-lightblue) ![MCP](https://img.shields.io/badge/MCP-remote-blueviolet) ![Users](https://img.shields.io/badge/multi--user-isolated-green) ![License](https://img.shields.io/badge/license-MIT-brightgreen)
 
 # Expense Tracker MCP
 
