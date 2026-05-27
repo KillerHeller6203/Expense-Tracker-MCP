@@ -53,7 +53,7 @@ Add this:
   "mcpServers": {
     "expense-tracker": {
       "type": "streamable-http",
-      "url": "https://clear-red-swallow.fastmcp.app/mcp",
+      "url": "https://expense-tracker-mcp-pg6c.onrender.com/mcp",
       "headers": {
         "api_key": "your_unique_key"
       }
@@ -105,7 +105,7 @@ Create a new file called `proxy.py` in the project folder:
 from fastmcp import FastMCP
 
 mcp = FastMCP.as_proxy(
-    "https://clear-red-swallow.fastmcp.app/mcp",
+    "https://expense-tracker-mcp-pg6c.onrender.com/mcp",
     name="Expense Tracker Proxy"
 )
 
