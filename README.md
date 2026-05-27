@@ -142,6 +142,6 @@ This file is only used to seed a brand new user's database on first connection. 
 
 ## Tech Stack
 
-- [FastMCP](https://fastmcp.com) — MCP server framework
+- [FastMCP](https://gofastmcp.com) — MCP server framework
 - SQLite — per-user isolated databases
 - Python 3.10+
