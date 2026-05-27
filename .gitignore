@@ -1,0 +1,6 @@
+expenses.json
+venv/
+__pycache__/
+*.pyc
+*.sqlite
+.env
