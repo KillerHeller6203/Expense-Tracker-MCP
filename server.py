@@ -1,4 +1,5 @@
-from fastmcp import FastMCP, Context
+from fastmcp import FastMCP
+from fastmcp.server.dependencies import get_http_headers
 from datetime import datetime, timedelta
 import aiosqlite
 import os
@@ -24,7 +25,6 @@ async def init_user_db(conn):
             category TEXT NOT NULL UNIQUE
         )
     """)
-
     await conn.execute("""
         CREATE TABLE IF NOT EXISTS expenses (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -36,32 +36,26 @@ async def init_user_db(conn):
             recurrence TEXT
         )
     """)
-
     cursor = await conn.execute("SELECT COUNT(*) FROM categories")
     row = await cursor.fetchone()
     count = row[0]
-
     if count == 0:
         with open(CONFIG_PATH, "r") as f:
             config = json.load(f)
         rows = [(cat,) for cat in config["categories"]]
         await conn.executemany("INSERT INTO categories (category) VALUES (?)", rows)
-
     await conn.commit()
 
 @mcp.tool
-async def add_expense(amount: float, category: str, note: str, ctx: Context) -> str:
-    request = await ctx.get_http_request()
-    user_key = request.headers.get("x-api-key", "default")
+async def add_expense(amount: float, category: str, note: str) -> str:
+    user_key = get_http_headers().get("x-api-key", "default")
     conn = await get_user_db(user_key)
     await init_user_db(conn)
 
     cursor = await conn.execute(
-        "SELECT id FROM categories WHERE category = ?",
-        (category,)
+        "SELECT id FROM categories WHERE category = ?", (category,)
     )
     valid = await cursor.fetchone()
-
     if not valid:
         cursor = await conn.execute("SELECT category FROM categories ORDER BY category")
         rows = await cursor.fetchall()
@@ -78,9 +72,8 @@ async def add_expense(amount: float, category: str, note: str, ctx: Context) -> 
     return f"Added ₹{amount} → {category} - {note}"
 
 @mcp.tool
-async def get_expenses(ctx: Context) -> str:
-    request = await ctx.get_http_request()
-    user_key = request.headers.get("x-api-key", "default")
+async def get_expenses() -> str:
+    user_key = get_http_headers().get("x-api-key", "default")
     conn = await get_user_db(user_key)
     await init_user_db(conn)
 
@@ -99,9 +92,8 @@ async def get_expenses(ctx: Context) -> str:
     return result
 
 @mcp.tool
-async def get_summary(ctx: Context) -> str:
-    request = await ctx.get_http_request()
-    user_key = request.headers.get("x-api-key", "default")
+async def get_summary() -> str:
+    user_key = get_http_headers().get("x-api-key", "default")
     conn = await get_user_db(user_key)
     await init_user_db(conn)
 
@@ -123,15 +115,13 @@ async def get_summary(ctx: Context) -> str:
     return result
 
 @mcp.tool
-async def get_expenses_by_period(period: str, ctx: Context) -> str:
+async def get_expenses_by_period(period: str) -> str:
     """period: 'weekly', 'monthly', 'yearly'"""
-    request = await ctx.get_http_request()
-    user_key = request.headers.get("x-api-key", "default")
+    user_key = get_http_headers().get("x-api-key", "default")
     conn = await get_user_db(user_key)
     await init_user_db(conn)
 
     now = datetime.now()
-
     if period == "weekly":
         start = (now - timedelta(days=7)).strftime("%Y-%m-%d")
     elif period == "monthly":
@@ -161,18 +151,15 @@ async def get_expenses_by_period(period: str, ctx: Context) -> str:
     return result
 
 @mcp.tool
-async def delete_expense(expense_id: int, ctx: Context) -> str:
-    request = await ctx.get_http_request()
-    user_key = request.headers.get("x-api-key", "default")
+async def delete_expense(expense_id: int) -> str:
+    user_key = get_http_headers().get("x-api-key", "default")
     conn = await get_user_db(user_key)
     await init_user_db(conn)
 
     cursor = await conn.execute(
-        "SELECT id FROM expenses WHERE id = ?",
-        (expense_id,)
+        "SELECT id FROM expenses WHERE id = ?", (expense_id,)
     )
     existing = await cursor.fetchone()
-
     if not existing:
         await conn.close()
         return f"No expense found with id {expense_id}"
@@ -183,28 +170,23 @@ async def delete_expense(expense_id: int, ctx: Context) -> str:
     return f"Deleted expense #{expense_id}"
 
 @mcp.tool
-async def edit_expense(expense_id: int, amount: float, category: str, note: str, ctx: Context) -> str:
-    request = await ctx.get_http_request()
-    user_key = request.headers.get("x-api-key", "default")
+async def edit_expense(expense_id: int, amount: float, category: str, note: str) -> str:
+    user_key = get_http_headers().get("x-api-key", "default")
     conn = await get_user_db(user_key)
     await init_user_db(conn)
 
     cursor = await conn.execute(
-        "SELECT id FROM expenses WHERE id = ?",
-        (expense_id,)
+        "SELECT id FROM expenses WHERE id = ?", (expense_id,)
     )
     existing = await cursor.fetchone()
-
     if not existing:
         await conn.close()
         return f"No expense found with id {expense_id}"
 
     cursor = await conn.execute(
-        "SELECT id FROM categories WHERE category = ?",
-        (category,)
+        "SELECT id FROM categories WHERE category = ?", (category,)
     )
     valid = await cursor.fetchone()
-
     if not valid:
         cursor = await conn.execute("SELECT category FROM categories ORDER BY category")
         rows = await cursor.fetchall()
@@ -221,18 +203,15 @@ async def edit_expense(expense_id: int, amount: float, category: str, note: str,
     return f"Updated expense #{expense_id} → ₹{amount} | {category} | {note}"
 
 @mcp.tool
-async def add_category(category: str, ctx: Context) -> str:
-    request = await ctx.get_http_request()
-    user_key = request.headers.get("x-api-key", "default")
+async def add_category(category: str) -> str:
+    user_key = get_http_headers().get("x-api-key", "default")
     conn = await get_user_db(user_key)
     await init_user_db(conn)
 
     cursor = await conn.execute(
-        "SELECT id FROM categories WHERE category = ?",
-        (category,)
+        "SELECT id FROM categories WHERE category = ?", (category,)
     )
     existing = await cursor.fetchone()
-
     if existing:
         await conn.close()
         return f"Category '{category}' already exists"
@@ -243,18 +222,15 @@ async def add_category(category: str, ctx: Context) -> str:
     return f"Added category '{category}'"
 
 @mcp.tool
-async def delete_category(category: str, ctx: Context) -> str:
-    request = await ctx.get_http_request()
-    user_key = request.headers.get("x-api-key", "default")
+async def delete_category(category: str) -> str:
+    user_key = get_http_headers().get("x-api-key", "default")
     conn = await get_user_db(user_key)
     await init_user_db(conn)
 
     cursor = await conn.execute(
-        "SELECT id FROM categories WHERE category = ?",
-        (category,)
+        "SELECT id FROM categories WHERE category = ?", (category,)
     )
     existing = await cursor.fetchone()
-
     if not existing:
         await conn.close()
         return f"Category '{category}' not found"
