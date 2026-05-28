@@ -1,4 +1,4 @@
-![Python](https://img.shields.io/badge/python-3.12+-blue) ![FastMCP](https://img.shields.io/badge/FastMCP-latest-orange) ![aiosqlite](https://img.shields.io/badge/aiosqlite-async-yellow) ![MCP](https://img.shields.io/badge/MCP-remote-blueviolet) ![Users](https://img.shields.io/badge/multi--user-isolated-green) ![License](https://img.shields.io/badge/license-MIT-brightgreen)
+![Python](https://img.shields.io/badge/python-3.12+-blue) ![FastMCP](https://img.shields.io/badge/FastMCP-latest-orange) ![Turso](https://img.shields.io/badge/database-Turso-teal) ![MCP](https://img.shields.io/badge/MCP-remote-blueviolet) ![Users](https://img.shields.io/badge/multi--user-isolated-green) ![License](https://img.shields.io/badge/license-MIT-brightgreen)
 
 # Expense Tracker MCP
 
@@ -102,12 +102,20 @@ pip install fastmcp
 Create a new file called `proxy.py` in the project folder:
 
 ```python
-from fastmcp import FastMCP
+from fastmcp.server import create_proxy
+from fastmcp import Client
+from fastmcp.client.transports import StreamableHttpTransport
+import os
 
-mcp = FastMCP.as_proxy(
+user_key = os.environ.get("MCP_USER_KEY", "default")
+
+transport = StreamableHttpTransport(
     "https://expense-tracker-mcp-pg6c.onrender.com/mcp",
-    name="Expense Tracker Proxy"
+    headers={"x-api-key": user_key}
 )
+
+client = Client(transport=transport)
+mcp = create_proxy(client, name="Expense Tracker Proxy")
 
 if __name__ == "__main__":
     mcp.run()
@@ -119,10 +127,10 @@ if __name__ == "__main__":
 {
   "mcpServers": {
     "expense-tracker": {
-      "command": "python",
+      "command": "C:/full/path/to/venv/Scripts/python.exe",
       "args": ["C:/full/path/to/proxy.py"],
       "env": {
-        "x-api-key": "your_unique_key"
+        "MCP_USER_KEY": "your_unique_key"
       }
     }
   }
@@ -143,8 +151,9 @@ This file is only used to seed a brand new user's database on first connection. 
 ## Tech Stack
 
 - [FastMCP](https://gofastmcp.com) — MCP server framework
-- SQLite — per-user isolated databases
-- Python 3.10+
+- Turso — persistent cloud SQLite, per-user isolated databases
+- Render — free cloud hosting
+- Python 3.12+
 
 --- 
 
@@ -161,6 +170,15 @@ This file is only used to seed a brand new user's database on first connection. 
 
 **Step 4 — Hit Deploy** and use your own URL in the config.
 
+**Step 5 — Set up Turso**
+
+- Go to [turso.tech](https://turso.tech) and create a free account
+- Create a new database
+- Generate a token
+- Add these as environment variables in Render:
+  - `TURSO_URL` = your database URL
+  - `TURSO_TOKEN` = your token
+
 ---
 
 ## Customizing Default Categories
@@ -173,3 +191,5 @@ Edit `config.json` before deploying:
 }
 ```
 This seeds a new user's database on first connection. After that manage categories via Claude directly.
+
+
