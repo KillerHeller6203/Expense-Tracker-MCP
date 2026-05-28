@@ -1,4 +1,4 @@
-![Python](https://img.shields.io/badge/python-3.11+-blue) ![FastMCP](https://img.shields.io/badge/FastMCP-latest-orange) ![SQLite](https://img.shields.io/badge/database-SQLite-lightblue) ![MCP](https://img.shields.io/badge/MCP-remote-blueviolet) ![Users](https://img.shields.io/badge/multi--user-isolated-green) ![License](https://img.shields.io/badge/license-MIT-brightgreen)
+![Python](https://img.shields.io/badge/python-3.12+-blue) ![FastMCP](https://img.shields.io/badge/FastMCP-latest-orange) ![aiosqlite](https://img.shields.io/badge/aiosqlite-async-yellow) ![MCP](https://img.shields.io/badge/MCP-remote-blueviolet) ![Users](https://img.shields.io/badge/multi--user-isolated-green) ![License](https://img.shields.io/badge/license-MIT-brightgreen)
 
 # Expense Tracker MCP
 
@@ -55,7 +55,7 @@ Add this:
       "type": "streamable-http",
       "url": "https://expense-tracker-mcp-pg6c.onrender.com/mcp",
       "headers": {
-        "api_key": "your_unique_key"
+        "x-api-key": "your_unique_key"
       }
     }
   }
@@ -122,7 +122,7 @@ if __name__ == "__main__":
       "command": "python",
       "args": ["C:/full/path/to/proxy.py"],
       "env": {
-        "api_key": "your_unique_key"
+        "x-api-key": "your_unique_key"
       }
     }
   }
@@ -145,3 +145,31 @@ This file is only used to seed a brand new user's database on first connection. 
 - [FastMCP](https://gofastmcp.com) — MCP server framework
 - SQLite — per-user isolated databases
 - Python 3.10+
+
+--- 
+
+## Deploy Your Own Instance
+
+**Step 1 — Fork this repo on GitHub**
+
+**Step 2 — Go to [render.com](https://render.com) and sign in with GitHub**
+
+**Step 3 — New → Web Service → Connect your forked repo**
+- **Build Command:** `pip install -r requirements.txt`
+- **Start Command:** `python server.py`
+- **Instance Type:** Free
+
+**Step 4 — Hit Deploy** and use your own URL in the config.
+
+---
+
+## Customizing Default Categories
+
+Edit `config.json` before deploying:
+
+```json
+{
+  "categories": ["Food", "Transport", "Shopping", "Health", "Entertainment", "Education", "Utilities", "Other"]
+}
+```
+This seeds a new user's database on first connection. After that manage categories via Claude directly.
