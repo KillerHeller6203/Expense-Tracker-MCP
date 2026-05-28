@@ -1,4 +1,4 @@
-![Python](https://img.shields.io/badge/python-3.12+-blue) ![FastMCP](https://img.shields.io/badge/FastMCP-latest-orange) ![Turso](https://img.shields.io/badge/database-Turso-teal) ![MCP](https://img.shields.io/badge/MCP-remote-blueviolet) ![Users](https://img.shields.io/badge/multi--user-isolated-green) ![License](https://img.shields.io/badge/license-MIT-brightgreen)
+![Python](https://img.shields.io/badge/python-3.12+-blue) ![FastMCP](https://img.shields.io/badge/FastMCP-latest-orange) ![aiosqlite](https://img.shields.io/badge/aiosqlite-async-yellow) ![MCP](https://img.shields.io/badge/MCP-remote-blueviolet) ![Users](https://img.shields.io/badge/multi--user-isolated-green) ![License](https://img.shields.io/badge/license-MIT-brightgreen)
 
 # Expense Tracker MCP
 
@@ -151,7 +151,7 @@ This file is only used to seed a brand new user's database on first connection. 
 ## Tech Stack
 
 - [FastMCP](https://gofastmcp.com) — MCP server framework
-- Turso — persistent cloud SQLite, per-user isolated databases
+- aiosqlite — async SQLite, per-user isolated databases
 - Render — free cloud hosting
 - Python 3.12+
 
@@ -169,15 +169,6 @@ This file is only used to seed a brand new user's database on first connection. 
 - **Instance Type:** Free
 
 **Step 4 — Hit Deploy** and use your own URL in the config.
-
-**Step 5 — Set up Turso**
-
-- Go to [turso.tech](https://turso.tech) and create a free account
-- Create a new database
-- Generate a token
-- Add these as environment variables in Render:
-  - `TURSO_URL` = your database URL
-  - `TURSO_TOKEN` = your token
 
 ---
 
